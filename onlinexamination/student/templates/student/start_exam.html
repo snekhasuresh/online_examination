@@ -1,0 +1,554 @@
+{% block content %}
+{%load static%}
+
+<head>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link rel="stylesheet" href="start_exam.css">
+  
+  <style>
+    /**/
+   .cal {
+  height: 80px;
+  width: 160px;
+  margin: 4% auto;
+  font-family: 'Source Sans Pro', sans-serif;
+  letter-spacing: 5px;
+  font-size: 10px;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+
+}
+
+.calculator {
+  padding: 10px;
+  -webkit-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 1px;
+  height: 310px;
+  background-color: rgb(245, 204, 210);
+}
+
+.input {
+  border: 1px solid #ddd;
+  border-radius: 1px;
+  height: 60px;
+  padding-right: 1px;
+  padding-top: 4px;
+  text-align: right;
+  margin-right: 3px;
+  font-size: 2.5rem;
+  overflow-x: auto;
+  transition: all .2s ease-in-out;
+  background-color: whitesmoke;
+}
+
+.input:hover {
+  border: 1px solid #bbb;
+  -webkit-box-shadow: inset 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+}
+
+.buttons {}
+
+.operators {}
+
+.operators div {
+  display: inline-block;
+  border: 1px solid #bbb;
+  border-radius: 1px;
+  width: 17px;
+  text-align: center;
+  padding: 5px;
+  margin: 20px 4px 10px 7px;
+  cursor: pointer;
+  background-color: #ddd;
+  transition: border-color .2s ease-in-out, background-color .2s, box-shadow .2s;
+}
+
+.operators div:hover {
+  background-color: #ddd;
+  -webkit-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+  border-color: #aaa;
+}
+
+.operators div:active {
+  font-weight: bold;
+}
+
+.leftPanel {
+  display: inline-block;
+}
+
+.numbers div {
+  display: inline-block;
+  border: 1px solid #ddd;
+  border-radius: 1px;
+  width: 18px;
+  text-align: center;
+  padding: 5px;
+  margin: 10px 4px 10px 5px;
+  cursor: pointer;
+  background-color: #f9f9f9;
+  transition: border-color .2s ease-in-out, background-color .2s, box-shadow .2s;
+}
+
+.numbers div:hover {
+  background-color: #f1f1f1;
+  -webkit-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+  border-color: #bbb;
+}
+
+.numbers div:active {
+  font-weight: bold;
+}
+
+div.equal {
+  display: inline-block;
+  border: 1px solid #3079ED;
+  border-radius: 1px;
+  width: 5%;
+  
+  text-align: center;
+  padding: 82px 10px;
+  margin: 10px 5px 10px 8px;
+  vertical-align: top;
+  cursor: pointer;
+  color: #FFF;
+  background-color: #4d90fe;
+  transition: all .2s ease-in-out;
+}
+
+div.equal:hover {
+  background-color: #307CF9;
+  -webkit-box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.2);
+  border-color: #1857BB;
+}
+
+div.equal:active {
+  font-weight: bold;
+}
+    /*calculator*/
+  /*sidebarcss*/
+  .sidebar {
+  margin: 0;
+  padding: 0;
+  width: 200px;
+  background-color: #f1f1f1;
+  position: fixed;
+  height: 100%;
+  overflow: auto;
+}
+
+
+    /* Sidebar links */
+.sidebar a {
+  display: block;
+  color: black;
+  padding: 16px;
+  text-decoration: none;
+}
+
+/* Active/current link */
+.sidebar a.active {
+  background-color: #04AA6D;
+  color: white;
+}
+
+/* Links on mouse-over */
+.sidebar a:hover:not(.active) {
+  background-color: #555;
+  color: white;
+}
+
+/* Page content. The value of the margin-left property should match the value of the sidebar's width property */
+div.content {
+  margin-left: 200px;
+  padding: 1px 16px;
+  height: 100px;
+}
+
+/* On screens that are less than 700px wide, make the sidebar into a topbar */
+@media screen and (max-width: 700px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .sidebar a {float: left;}
+  div.content {margin-left: 0;}
+}
+
+/* On screens that are less than 400px, display the bar vertically, instead of horizontally */
+@media screen and (max-width: 400px) {
+  .sidebar a {
+    text-align: center;
+    float: none;
+  }
+}
+
+  </style>
+</head>
+<!--sidebar-->
+<div class="sidebar">
+<!---timer-->
+
+    <div class="content">
+      <div style="font-weight: bold; height: 50px; width: 250px; border: 1px solid black; float: right;" id="quiz-time-left"></div>
+    </div>
+    <div class="cal">
+    <div class="calculator">
+      <div class="input" id="input"></div>
+      <div class="buttons">
+        <div class="operators">
+          <div>+</div>
+          <div>-</div>
+          <div>&times;</div>
+          <div>&divide;</div>
+        </div>
+        <div class="leftPanel">
+          <div class="numbers">
+            <div>7</div>
+            <div>8</div>
+            <div>9</div>
+          </div>
+          <div class="numbers">
+            <div>4</div>
+            <div>5</div>
+            <div>6</div>
+          </div>
+          <div class="numbers">
+            <div>1</div>
+            <div>2</div>
+            <div>3</div>
+          </div>
+          <div class="numbers">
+            <div>0</div>
+            <div>.</div>
+            <div id="clear">C</div>
+          </div>
+        </div>
+        <div class="equal" id="result" style="height: 20px;">=</div>
+      </div>
+    </div>
+    <div>
+    </div>
+    </div>
+    <!---calculator end-->
+    <!----question box-->
+    <div class="qnbox">
+     
+    </div>
+    <br><br><br><br><br><br>
+    <br><br><br><br><br><br>
+    <br><br><br><br><br><br>
+    <div class="form-group">
+      <video id="stream" width="200" height="300">
+          <canvas id="capture" width="400" height="420">
+          </canvas>
+        </video>
+        <button id="btn-capture"></button>
+      <br><br>
+          <div id="snapshot"></div>
+      <input type="hidden" id="image_hidden" name="image_hidden">
+      </div>
+ 
+   
+</div>
+
+<!---content-->
+<div class="content">
+
+  <div class="jumbotron my-4">
+    
+  <form class="form" name="quiz" id="quiz" autocomplete="off" onsubmit="return saveAns(),validate(),CheckTime()"  action="/student/calculate-marks" method="POST">
+    {% csrf_token %}
+    <h2 style="text-align: center;">Course: {{course.course_name}}</h2>
+
+    {% for q in questions %}
+
+    <h3 class="text-danger">{{forloop.counter }}. {{q.question}}</h3> <h4 style="text-align: right;">[{{q.marks}} Marks]</h4>
+    
+        <input type="hidden" name="csrfmiddlewaretoken" value="C24rUotmdHawVQJL3KrqiWxvti8UffOFYUc8TRbZtLt36AVLdP3jbkzUVe3beRAa">
+        
+        
+          <div class="form-check mx-4">
+            <input class="form-check-input" type="radio" name="{{ forloop.counter }}" id="{{q.option1}}" value="Option1">
+            <label class="form-check-label" for="option1">
+              {{q.option1}}
+            </label>
+          </div>
+
+        
+          <div class="form-check mx-4">
+            <input class="form-check-input" type="radio" name="{{ forloop.counter }}" id="{{q.option2}}" value="Option2">
+            <label class="form-check-label" for="option2">
+              {{q.option2}}
+            </label>
+          </div>
+
+        
+          <div class="form-check mx-4">
+            <input class="form-check-input" type="radio" name="{{ forloop.counter }}" id="{{q.option3}}" value="Option3">
+            <label class="form-check-label" for="option3">
+              {{q.option3}}
+            </label>
+          </div>
+
+        
+          <div class="form-check mx-4">
+            <input class="form-check-input" type="radio" name="{{ forloop.counter }}" id="{{q.option4}}" value="Option4">
+            <label class="form-check-label" for="option4">
+              {{q.option4}}
+            </label>
+          </div>
+
+        {% endfor %}
+        <button style="border-radius: 0%;background-color: rgb(39, 216, 39);"  type="submit" value="Submit Answers">Submit Answers</button> 
+    </form>
+  </div>
+  </div>
+
+<script> 
+    function saveAns(){  
+
+        var ele = document.getElementsByTagName('input'); 
+        for(i = 0; i < ele.length; i++) { 
+            if(ele[i].type="radio") { 
+                if(ele[i].checked){        
+                  setCookie(ele[i].name,ele[i].value,3)
+                }
+            } 
+        } 
+          
+    }
+    
+    function setCookie(cname, cvalue, exdays) {
+  var d = new Date();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  var expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+    document.getElementById("btn").addEventListener("click",function(){document.write(questions);});
+
+    
+</script> 
+<script type="text/javascript">
+  var total_seconds =60*10*6;
+  var c_minutes = parseInt(total_seconds/60);
+  var c_seconds = parseInt(total_seconds%60);
+  
+  function CheckTime(){
+  document.getElementById("quiz-time-left").innerHTML
+  ='Time Left: ' + c_minutes + ' minutes ' + c_seconds + ' seconds ' ;
+  if(total_seconds <=0){
+      setTimeout('document.quiz.submit()',1);
+  } else{
+      total_seconds = total_seconds -1;
+      c_minutes = parseInt(total_seconds/60);
+      c_seconds = parseInt(total_seconds&60);
+      setTimeout("CheckTime()",1000);
+  }}
+  setTimeout("CheckTime()",1000);
+  </script>
+   
+      <script>
+        function button(){
+          document.getElementById("jumb").style.display="";
+          document.getElementById("btn").style.visibility="hidden";
+
+        }
+        "use strict";
+
+var input = document.getElementById('input'), // input/output button
+  number = document.querySelectorAll('.numbers div'), // number buttons
+  operator = document.querySelectorAll('.operators div'), // operator buttons
+  result = document.getElementById('result'), // equal button
+  clear = document.getElementById('clear'), // clear button
+  resultDisplayed = false; // flag to keep an eye on what output is displayed
+
+// adding click handlers to number buttons
+for (var i = 0; i < number.length; i++) {
+  number[i].addEventListener("click", function(e) {
+
+    // storing current input string and its last character in variables - used later
+    var currentString = input.innerHTML;
+    var lastChar = currentString[currentString.length - 1];
+
+    // if result is not diplayed, just keep adding
+    if (resultDisplayed === false) {
+      input.innerHTML += e.target.innerHTML;
+    } else if (resultDisplayed === true && lastChar === "+" || lastChar === "-" || lastChar === "×" || lastChar === "÷") {
+      // if result is currently displayed and user pressed an operator
+      // we need to keep on adding to the string for next operation
+      resultDisplayed = false;
+      input.innerHTML += e.target.innerHTML;
+    } else {
+      // if result is currently displayed and user pressed a number
+      // we need clear the input string and add the new input to start the new opration
+      resultDisplayed = false;
+      input.innerHTML = "";
+      input.innerHTML += e.target.innerHTML;
+    }
+
+  });
+}
+
+// adding click handlers to number buttons
+for (var i = 0; i < operator.length; i++) {
+  operator[i].addEventListener("click", function(e) {
+
+    // storing current input string and its last character in variables - used later
+    var currentString = input.innerHTML;
+    var lastChar = currentString[currentString.length - 1];
+
+    // if last character entered is an operator, replace it with the currently pressed one
+    if (lastChar === "+" || lastChar === "-" || lastChar === "×" || lastChar === "÷") {
+      var newString = currentString.substring(0, currentString.length - 1) + e.target.innerHTML;
+      input.innerHTML = newString;
+    } else if (currentString.length == 0) {
+      // if first key pressed is an opearator, don't do anything
+      console.log("enter a number first");
+    } else {
+      // else just add the operator pressed to the input
+      input.innerHTML += e.target.innerHTML;
+    }
+
+  });
+}
+
+// on click of 'equal' button
+result.addEventListener("click", function() {
+
+  // this is the string that we will be processing eg. -10+26+33-56*34/23
+  var inputString = input.innerHTML;
+
+  // forming an array of numbers. eg for above string it will be: numbers = ["10", "26", "33", "56", "34", "23"]
+  var numbers = inputString.split(/\+|\-|\×|\÷/g);
+
+  // forming an array of operators. for above string it will be: operators = ["+", "+", "-", "*", "/"]
+  // first we replace all the numbers and dot with empty string and then split
+  var operators = inputString.replace(/[0-9]|\./g, "").split("");
+
+  console.log(inputString);
+  console.log(operators);
+  console.log(numbers);
+  console.log("----------------------------");
+
+  // now we are looping through the array and doing one operation at a time.
+  // first divide, then multiply, then subtraction and then addition
+  // as we move we are alterning the original numbers and operators array
+  // the final element remaining in the array will be the output
+
+  var divide = operators.indexOf("÷");
+  while (divide != -1) {
+    numbers.splice(divide, 2, numbers[divide] / numbers[divide + 1]);
+    operators.splice(divide, 1);
+    divide = operators.indexOf("÷");
+  }
+
+  var multiply = operators.indexOf("×");
+  while (multiply != -1) {
+    numbers.splice(multiply, 2, numbers[multiply] * numbers[multiply + 1]);
+    operators.splice(multiply, 1);
+    multiply = operators.indexOf("×");
+  }
+
+  var subtract = operators.indexOf("-");
+  while (subtract != -1) {
+    numbers.splice(subtract, 2, numbers[subtract] - numbers[subtract + 1]);
+    operators.splice(subtract, 1);
+    subtract = operators.indexOf("-");
+  }
+
+  var add = operators.indexOf("+");
+  while (add != -1) {
+    // using parseFloat is necessary, otherwise it will result in string concatenation :)
+    numbers.splice(add, 2, parseFloat(numbers[add]) + parseFloat(numbers[add + 1]));
+    operators.splice(add, 1);
+    add = operators.indexOf("+");
+  }
+
+  input.innerHTML = numbers[0]; // displaying the output
+
+  resultDisplayed = true; // turning flag if result is displayed
+});
+
+// clearing the input on press of clear
+clear.addEventListener("click", function() {
+  input.innerHTML = "";
+})
+      </script>
+<br><br><br><br><br><br>
+<script>
+  var btnCapture = document.getElementById("btn-capture");
+  var stream = document.getElementById("stream");
+  var capture = document.getElementById("capture");
+  var snapshot = document.getElementById("snapshot");
+  var cameraStream = null;
+  
+  btnCapture.addEventListener( "click", captureSnapshot );
+
+  function startStreaming() {
+  
+    var mediaSupport = 'mediaDevices' in navigator;
+  
+    if( mediaSupport && null == cameraStream ) {
+  
+      navigator.mediaDevices.getUserMedia( { video: true } )
+      .then( function( mediaStream ) {
+        cameraStream = mediaStream;
+        stream.srcObject = mediaStream;
+        stream.play();
+      })
+      .catch( function( err ) {
+        console.log( "Unable to access camera: " + err );
+      });
+    }
+    else {
+      alert( 'Your browser does not support media devices.' );
+      return;
+    }
+  }
+  
+  function stopStreaming() {
+    if( null != cameraStream ) {
+      var track = cameraStream.getTracks()[ 0 ];
+      track.stop();
+      stream.load();
+      cameraStream = null;
+    }
+  }
+  
+  function captureSnapshot() {
+    if( null != cameraStream ) {
+      var ctx = capture.getContext( '2d' );
+      var img = new Image();
+      ctx.drawImage( stream, 0, 0, capture.width, capture.height );
+      img.src		= capture.toDataURL( "image/png" );
+      img.width	= 370;
+      img.height	= 320;
+      //console.log(capture.toDataURL( "image/png" ));
+      snapshot.innerHTML = '';
+      snapshot.appendChild( img );
+      var d1 = capture.toDataURL("image/png");
+      var res = d1.replace("data:image/png;base64,", "");
+      console.log(res);
+      snapshot.innerHTML = '';
+      snapshot.appendChild( img );
+      $("#image_hidden").val(res)    
+    }
+  }
+  window.onload = function() {
+     startStreaming();
+     captureSnapshot();
+  }
+</script>
+
+{% endblock content %}
